@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--everything which we needed to show to user will come in this file
+which can be form view tree actions menus submenu kanban etc-->
+<odoo>
+
+    <!--Tree view -->
+    <record id="view_doctor_tree" model="ir.ui.view">
+        <field name="name">hospital.doctor.tree</field>
+        <field name="model">hospital.doctor</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field  name="name"/>
+                <field name="specialty"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_doctor_form" model="ir.ui.view">
+        <field name="name">hospital.doctor.form</field>
+        <field name="model">hospital.doctor</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name = "age"/>
+                        <field name = "city"/>
+                        <field name = "image" widget = "image"/>
+                        <field name="specialty"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_doctor" model="ir.actions.act_window">
+            <field name="name">Doctors</field>
+            <field name="res_model">hospital.doctor</field>
+            <field name="view_mode">tree,form</field> <!--# can be add other views-->
+<!--            <field name="search_view_id" ref="view_account_type_search"/>-->
+            <field name="help" type="html">
+              <p class="o_view_nocontent_smiling_face">
+                Define a new account type
+              </p><p>
+                An account type is used to determine how an account is used in
+                each journal. The deferral method of an account type determines
+                the process for the annual closing. Reports such as the Balance
+                Sheet and the Profit and Loss report use the category
+                (profit/loss or balance sheet).
+              </p>
+            </field>
+        </record>
+
+
+    <menuitem id = "hospital_root_menu"
+              name = "doctor"
+              web_icon = 'path/static/description/icon.png'
+              sequence = "7"/>  # lower the sequence and menu will be listed first
+
+    <menuitem id = "hospital_doctor_menu"
+              name = "doctor" action ="action_doctor"
+              parent = "hospital_root_menu"
+              sequence = "10"/>  # lower the sequence and menu will be listed first
+
+
+</odoo>
