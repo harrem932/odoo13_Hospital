@@ -177,6 +177,7 @@ class HospitalDoctor(models.Model):  # models.Model is our base class
                 raise UserError(_("Only approved doctors can be moved to In Progress."))
             rec.write({'state': 'in_progress'})
         return True
+    
 
     def action_done(self):
         if self.state != 'in_progress':
