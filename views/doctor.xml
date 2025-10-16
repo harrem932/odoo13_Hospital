@@ -1,66 +1,249 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<!--everything which we needed to show to user will come in this file
-which can be form view tree actions menus submenu kanban etc-->
 <odoo>
+    <data>
+        <!-- Search View -->
+        <record id="view_hospital_doctor_search" model="ir.ui.view">
+            <field name="name">hospital.doctor.search</field>
+            <field name="model">hospital.doctor</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name" string="Doctor Name"/>
+                    <field name="license_number" string="License Number"/>
+                    <field name="specialty" string="Specialty"/>
+                    <field name="department" string="Department"/>
+                    <field name="state" string="Status"/>
+                    <field name="email" string="Email"/>
 
-    <!--Tree view -->
-    <record id="view_doctor_tree" model="ir.ui.view">
-        <field name="name">hospital.doctor.tree</field>
-        <field name="model">hospital.doctor</field>
-        <field name="arch" type="xml">
-            <tree>
-                <field  name="name"/>
-                <field name="specialty"/>
-            </tree>
-        </field>
-    </record>
+                    <filter name="filter_draft" string="Draft"
+                            domain="[('state', '=', 'draft')]"/>
+                    <filter name="filter_approved" string="Approved"
+                            domain="[('state', '=', 'approved')]"/>
+                    <filter name="filter_in_progress" string="In Progress"
+                            domain="[('state', '=', 'in_progress')]"/>
+                    <filter name="filter_done" string="Done"
+                            domain="[('state', '=', 'done')]"/>
 
-    <record id="view_doctor_form" model="ir.ui.view">
-        <field name="name">hospital.doctor.form</field>
-        <field name="model">hospital.doctor</field>
-        <field name="arch" type="xml">
-            <form>
-                <sheet>
-                    <group>
-                        <field name="name"/>
-                        <field name = "age"/>
-                        <field name = "city"/>
-                        <field name = "image" widget = "image"/>
-                        <field name="specialty"/>
+                    <separator/>
+
+                    <filter name="filter_cardiologist" string="Cardiologists"
+                            domain="[('specialty', 'in', ['Cardiologist', 'heart Doctor'])]"/>
+                    <filter name="filter_general" string="General Doctors"
+                            domain="[('specialty', '=', 'General Doctor')]"/>
+
+                    <separator/>
+
+                    <group expand="0" string="Group By">
+                        <filter name="group_by_specialty" string="Specialty"
+                                domain="[]" context="{'group_by': 'specialty'}"/>
+                        <filter name="group_by_department" string="Department"
+                                domain="[]" context="{'group_by': 'department'}"/>
+                        <filter name="group_by_state" string="Status"
+                                domain="[]" context="{'group_by': 'state'}"/>
+                        <filter name="group_by_issuing_authority" string="Issuing Authority"
+                                domain="[]" context="{'group_by': 'issuing_authority'}"/>
                     </group>
-                </sheet>
-            </form>
-        </field>
-    </record>
-
-    <record id="action_doctor" model="ir.actions.act_window">
-            <field name="name">Doctors</field>
-            <field name="res_model">hospital.doctor</field>
-            <field name="view_mode">tree,form</field> <!--# can be add other views-->
-<!--            <field name="search_view_id" ref="view_account_type_search"/>-->
-            <field name="help" type="html">
-              <p class="o_view_nocontent_smiling_face">
-                Define a new account type
-              </p><p>
-                An account type is used to determine how an account is used in
-                each journal. The deferral method of an account type determines
-                the process for the annual closing. Reports such as the Balance
-                Sheet and the Profit and Loss report use the category
-                (profit/loss or balance sheet).
-              </p>
+                </search>
             </field>
         </record>
 
+        <!-- Tree view -->
+        <record id="view_doctor_tree" model="ir.ui.view">
+            <field name="name">hospital.doctor.tree</field>
+            <field name="model">hospital.doctor</field>
+            <field name="arch" type="xml">
+                <tree string="Doctors">
+                    <field name="name"/>
+                    <field name="specialty"/>
+                    <field name="age"/>
+                    <field name="city"/>
+                    <field name="phone_number"/>
+                    <field name="license_number" string="License No."/>
+                    <field name="department"/>
+                    <field name="state"/>
+                </tree>
+            </field>
+        </record>
 
-    <menuitem id = "hospital_root_menu"
-              name = "doctor"
-              web_icon = 'path/static/description/icon.png'
-              sequence = "7"/>  # lower the sequence and menu will be listed first
+        <!-- Form view -->
+        <record id="view_doctor_form" model="ir.ui.view">
+            <field name="name">hospital.doctor.form.view</field>
+            <field name="model">hospital.doctor</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button name="action_approve" string="Approve" type="object"
+                                class="oe_highlight" states="draft"/>
+                        <button name="action_in_progress" string="In Progress" type="object"
+                                class="oe_highlight" states="approved"/>
+                        <button name="action_done" string="Done" type="object"
+                                class="oe_highlight" states="in_progress"/>
+                        <button name="action_cancel" string="Cancel" type="object"
+                                states="draft,approved,in_progress"/>
 
-    <menuitem id = "hospital_doctor_menu"
-              name = "doctor" action ="action_doctor"
-              parent = "hospital_root_menu"
-              sequence = "10"/>  # lower the sequence and menu will be listed first
+                        <field name="state" widget="statusbar"
+                               statusbar_visible="draft,approved,in_progress,done"/>
+                    </header>
 
+                    <sheet>
+                        <div class="oe_title">
+                            <div class="o_row">
+                                <field name="image" widget="image" class="oe_avatar"
+                                       options="{'size': [90, 90]}"/>
+                                <div>
+                                    <h1>
+                                        <field name="name" placeholder="Doctor Name" required="1"/>
+                                    </h1>
+                                    <h3>
+                                        <field name="specialty" placeholder="Select Specialty"/>
+                                    </h3>
+                                </div>
+                            </div>
+                        </div>
 
+                        <notebook>
+                            <!-- Personal Information Tab -->
+                            <page string="Personal Information">
+                                <group>
+                                    <group string="Basic Information">
+                                        <field name="full_name"/>
+                                        <field name="age"/>
+                                        <field name="birth_date"/>
+                                        <field name="gender"/>
+                                        <field name="email" widget="email"/>
+                                        <field name="phone_number"/>
+                                        <field name="emergency_contact"/>
+                                    </group>
+                                    <group string="Address Information">
+                                        <field name="address"/>
+                                        <field name="city"/>
+                                        <field name="country"/>
+                                    </group>
+                                </group>
+                            </page>
+
+                            <!-- Professional Information Tab -->
+                            <page string="Professional Information">
+                                <group>
+                                    <group string="License Information">
+                                        <field name="license_number"/>
+                                        <field name="issuing_date"/>
+                                        <field name="issuing_authority"/>
+                                        <field name="degree_type"/>
+                                    </group>
+                                    <group string="Employment">
+                                        <field name="department"/>
+                                        <field name="hire_date"/>
+                                        <field name="years_experience" readonly="1"/>
+                                        <field name="rating"/>
+                                    </group>
+                                </group>
+
+                                <group string="Consultant Information">
+                                    <group>
+                                        <field name="is_consultant"/>
+                                        <field name="consultation_fee"
+                                               attrs="{'invisible': [('is_consultant', '=', False)]}"/>
+                                    </group>
+                                </group>
+                            </page>
+
+                            <page string="Notes and Settings">
+                                <group>
+                                    <group string="Additional Notes">
+                                        <field name="notes" nolabel="1"/>
+                                    </group>
+                                    <group string="System Settings">
+                                        <field name="allow_to_edit"/>
+                                        <field name="active"/>
+                                    </group>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids"/>
+                        <field name="activity_ids"/>
+                        <field name="message_ids"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+        <!-- Kanban view -->
+        <record id="view_doctor_kanban" model="ir.ui.view">
+            <field name="name">hospital.doctor.kanban</field>
+            <field name="model">hospital.doctor</field>
+            <field name="arch" type="xml">
+                <kanban class="o_kanban_mobile">
+                    <field name="name"/>
+                    <field name="specialty"/>
+                    <field name="age"/>
+                    <field name="city"/>
+                    <field name="state"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="oe_kanban_card o_kanban_record">
+                                <div class="o_kanban_image">
+                                    <field name="image" widget="image" options="{'size': [50, 50]}"/>
+                                </div>
+                                <div class="oe_kanban_details">
+                                    <div>
+                                        <strong>Name:</strong>
+                                        <t t-esc="record.name.raw_value or 'No Name'"/>
+                                    </div>
+                                    <div>
+                                        <strong>Specialty:</strong>
+                                        <t t-esc="record.specialty.raw_value or 'N/A'"/>
+                                    </div>
+                                    <div>
+                                        <strong>Age:</strong>
+                                        <t t-esc="record.age.raw_value or 0"/>
+                                    </div>
+                                    <div>
+                                        <strong>City:</strong>
+                                        <t t-esc="record.city.raw_value or 'N/A'"/>
+                                    </div>
+                                    <div class="o_kanban_record_bottom">
+                                        <div class="oe_kanban_bottom_left">
+                                            <span class="badge"
+                                                  t-att-class="'badge-' + (record.state.raw_value == 'done' ? 'success' : (record.state.raw_value == 'approved' ? 'info' : 'warning'))">
+                                                <t t-esc="record.state.raw_value or 'Draft'"/>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+        <!-- Actions -->
+        <record id="action_doctor" model="ir.actions.act_window">
+            <field name="name">Doctors</field>
+            <field name="res_model">hospital.doctor</field>
+            <field name="view_mode">kanban,tree,form</field>
+            <field name="search_view_id" ref="view_hospital_doctor_search"/>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create your first doctor record
+                </p>
+                <p>
+                    A doctor is a medical professional who provides healthcare services.
+                    The system helps you track doctors, their qualifications, and their
+                    patient assignments.
+                </p>
+            </field>
+        </record>
+
+        <!-- Specialized Doctor Actions -->
+        <record id="action_doctor_specialists" model="ir.actions.act_window">
+            <field name="name">Specialists</field>
+            <field name="res_model">hospital.doctor</field>
+            <field name="view_mode">kanban,tree,form</field>
+            <field name="domain">[('specialty', 'in', ['Cardiologist', 'Neurologist', 'Orthopedic'])]</field>
+        </record>
+
+    </data>
 </odoo>

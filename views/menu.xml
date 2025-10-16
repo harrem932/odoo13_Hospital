@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Main Hospital Menu -->
+    <menuitem id="hospital_root_menu"
+              name="Hospital Management"
+              web_icon="hospital,static/description/icon.png"
+              sequence="5"/>
+
+    <!-- DOCTORS SECTION -->
+    <menuitem id="hospital_doctors_main_menu"
+              name="Medical Staff"
+              parent="hospital_root_menu"
+              sequence="10"/>
+
+    <menuitem id="hospital_all_doctors_menu"
+              name="All Doctors"
+              action="action_doctor"
+              parent="hospital_doctors_main_menu"
+              sequence="1"/>
+
+    <menuitem id="hospital_specialists_menu"
+              name="Specialists"
+              action="action_doctor_specialists"
+              parent="hospital_doctors_main_menu"
+              sequence="2"/>
+
+    <!-- PATIENTS SECTION -->
+    <menuitem id="hospital_patients_main_menu"
+              name="Patient Care"
+              parent="hospital_root_menu"
+              sequence="20"/>
+
+    <menuitem id="hospital_all_patients_menu"
+              name="All Patients"
+              action="action_patient"
+              parent="hospital_patients_main_menu"
+              sequence="1"/>
+
+    <menuitem id="hospital_inpatients_menu"
+              name="Inpatients"
+              action="action_inpatients"
+              parent="hospital_patients_main_menu"
+              sequence="2"/>
+
+    <menuitem id="hospital_outpatients_menu"
+              name="Outpatients"
+              action="action_outpatients"
+              parent="hospital_patients_main_menu"
+              sequence="3"/>
+
+    <menuitem id="hospital_emergency_patients_menu"
+              name="Emergency Patients"
+              action="action_emergency_patients"
+              parent="hospital_patients_main_menu"
+              sequence="4"/>
+
+    <!-- STAFF SECTION -->
+    <menuitem id="hospital_staff_main_menu"
+              name="Hospital Staff"
+              parent="hospital_root_menu"
+              sequence="30"/>
+
+    <menuitem id="hospital_all_staff_menu"
+              name="All Staff"
+              action="action_staff"
+              parent="hospital_staff_main_menu"
+              sequence="1"/>
+
+    <menuitem id="hospital_nursing_staff_menu"
+              name="Nursing Staff"
+              action="action_nursing_staff"
+              parent="hospital_staff_main_menu"
+              sequence="2"/>
+
+    <menuitem id="hospital_administrative_staff_menu"
+              name="Administrative Staff"
+              action="action_admin_staff"
+              parent="hospital_staff_main_menu"
+              sequence="3"/>
+
+    <menuitem id="hospital_technical_staff_menu"
+              name="Technical Staff"
+              action="action_technical_staff"
+              parent="hospital_staff_main_menu"
+              sequence="4"/>
+
+    <menuitem id="hospital_support_staff_menu"
+              name="Support Staff"
+              action="action_support_staff"
+              parent="hospital_staff_main_menu"
+              sequence="5"/>
+
+    <!-- DEPARTMENTS SECTION -->
+    <menuitem id="hospital_departments_main_menu"
+              name="Departments"
+              parent="hospital_root_menu"
+              sequence="40"/>
+
+    <menuitem id="hospital_all_departments_menu"
+              name="All Departments"
+              action="action_department"
+              parent="hospital_departments_main_menu"
+              sequence="1"/>
+</odoo>

@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_hospital_patient_search" model="ir.ui.view">
+        <field name="name">hospital.patient.search</field>
+        <field name="model">hospital.patient</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name" string="Patient Name"/>
+                <field name="phone_number" string="Phone Number"/>
+                <field name="help_needed" string="Condition"/>
+                <field name="state" string="Status"/>
+                <field name="priority" string="Priority"/>
+                <field name="blood_group" string="Blood Group"/>
+                <field name="patient_id" string="Assigned Doctor"/>
+                <filter name="filter_draft" string="Draft" domain="[('state', '=', 'draft')]"/>
+                <filter name="filter_registered" string="Registered" domain="[('state', '=', 'registered')]"/>
+                <filter name="filter_admitted" string="Admitted" domain="[('state', '=', 'admitted')]"/>
+                <filter name="filter_discharged" string="Discharged" domain="[('state', '=', 'discharged')]"/>
+                <filter name="filter_critical" string="Critical Priority" domain="[('priority', '=', 'critical')]"/>
+                <filter name="filter_high_priority" string="High Priority" domain="[('priority', '=', 'high')]"/>
+                <filter name="filter_by_doctor" string="Has Assigned Doctor" domain="[('patient_id', '!=', False)]"/>
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter name="group_by_state" string="Status" domain="[]" context="{'group_by': 'state'}"/>
+                    <filter name="group_by_priority" string="Priority" domain="[]" context="{'group_by': 'priority'}"/>
+                    <filter name="group_by_blood_group" string="Blood Group" domain="[]"
+                            context="{'group_by': 'blood_group'}"/>
+                    <filter name="group_by_doctor" string="Assigned Doctor" domain="[]"
+                            context="{'group_by': 'patient_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+<!--    this is action -->
+    <record id="action_patient" model="ir.actions.act_window">
+        <field name="name">Patients</field>
+        <field name="res_model">hospital.patient</field>
+        <field name="view_mode">kanban,tree,form,graph,pivot</field>
+        <field name="search_view_id" ref="view_hospital_patient_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Manage patients
+            </p>
+            <p>
+                Create and manage patient records, including medical history and appointments.
+            </p>
+        </field>
+    </record>
+
+    <record id="action_inpatients" model="ir.actions.act_window">
+        <field name="name">Inpatients</field>
+        <field name="res_model">hospital.patient</field>
+        <field name="view_mode">tree,form,kanban</field>
+        <field name="domain">[('state', '=', 'admitted')]</field>
+        <field name="search_view_id" ref="view_hospital_patient_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Manage inpatients
+            </p>
+            <p>
+                View and manage records for admitted patients.
+            </p>
+        </field>
+    </record>
+
+    <record id="action_outpatients" model="ir.actions.act_window">
+        <field name="name">Outpatients</field>
+        <field name="res_model">hospital.patient</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('state', 'in', ['registered', 'discharged'])]</field>
+        <field name="search_view_id" ref="view_hospital_patient_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Manage outpatients
+            </p>
+            <p>
+                View and manage records for registered or discharged patients.
+            </p>
+        </field>
+    </record>
+
+    <record id="action_emergency_patients" model="ir.actions.act_window">
+        <field name="name">Emergency Patients</field>
+        <field name="res_model">hospital.patient</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('priority', '=', 'critical')]</field>
+        <field name="search_view_id" ref="view_hospital_patient_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Manage emergency patients
+            </p>
+            <p>
+                View and manage records for patients with critical priority.
+            </p>
+        </field>
+    </record>
+
+    <record id="view_patient_tree" model="ir.ui.view">
+        <field name="name">hospital.patient.tree</field>
+        <field name="model">hospital.patient</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="full_name"/>
+                <field name="age"/>
+                <field name="city"/>
+                <field name="image" widget="image"/>
+                <field name="address"/>
+                <field name="patient_history"/>
+                <field name="last_lab_results"/>
+                <field name="phone_number"/>
+                <field name="visit_history"/>
+                <field name="emergency_contact"/>
+                <field name="help_needed"/>
+                <field name="priority"/>
+                <field name="state"/>
+                <field name="patient_id" string="Assigned Doctor"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_patient_form" model="ir.ui.view">
+        <field name="name">hospital.patient.form.view</field>
+        <field name="model">hospital.patient</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_register" string="Register" type="object" class="oe_highlight" states="draft"/>
+                    <button name="action_admit" string="Admit" type="object" class="oe_highlight" states="registered"/>
+                    <button name="action_discharge" string="Discharge" type="object" class="oe_highlight"
+                            states="admitted"/>
+                    <button name="action_cancel" string="Cancel" type="object" states="draft,registered,admitted"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,registered,admitted,discharged"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Patient Name" required="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Personal Information">
+                            <field name="full_name"/>
+                            <field name="age"/>
+                            <field name="birth_date"/>
+                            <field name="gender"/>
+                            <field name="blood_group"/>
+                            <field name="phone_number"/>
+                            <field name="email" widget="email"/>
+                            <field name="emergency_contact"/>
+                        </group>
+                        <group string="Address">
+                            <field name="address"/>
+                            <field name="city"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Medical Information">
+                            <group>
+                                <field name="patient_history" nolabel="1"/>
+                                <field name="last_lab_results" nolabel="1"/>
+                                <field name="visit_history" nolabel="1"/>
+                                <field name="current_symptoms" nolabel="1"/>
+                                <field name="allergies" nolabel="1"/>
+                                <field name="medication_history" nolabel="1"/>
+                                <field name="help_needed"/>
+                            </group>
+                        </page>
+                        <page string="Assignments">
+                            <group>
+                                <field name="patient_id" string="Assigned Doctor"/>
+                                <field name="staff_ids" nolabel="1">
+                                    <tree>
+                                        <field name="name"/>
+                                        <field name="role"/>
+                                    </tree>
+                                </field>
+                            </group>
+                        </page>
+                        <page string="Status">
+                            <group>
+                                <field name="admission_date"/>
+                                <field name="discharge_date"/>
+                                <field name="priority"/>
+                                <field name="next_appointment"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_patient_kanban" model="ir.ui.view">
+        <field name="name">hospital.patient.kanban</field>
+        <field name="model">hospital.patient</field>
+        <field name="arch" type="xml">
+            <kanban>
+                <field name="name"/>
+                <field name="age"/>
+                <field name="phone_number"/>
+                <field name="priority"/>
+                <field name="state"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_card">
+                            <div class="oe_kanban_image">
+                                <field name="image" widget="image" options="{'size': [50, 50]}"/>
+                            </div>
+                            <div class="o_kanban_details">
+                                <div>
+                                    <strong>Name:</strong>
+                                    <t t-esc="record.name.raw_value or 'No Name'"/>
+                                </div>
+                                <div>
+                                    <strong>Age:</strong>
+                                    <t t-esc="record.age.raw_value or 0"/>
+                                </div>
+                                <div>
+                                    <strong>Phone:</strong>
+                                    <t t-esc="record.phone_number.raw_value or 'N/A'"/>
+                                </div>
+                                <div>
+                                    <strong>Priority:</strong>
+                                    <t t-esc="record.priority.raw_value or 'N/A'"/>
+                                </div>
+                                <div class="o_kanban_record_bottom">
+                                    <div class="oe_kanban_bottom_left">
+                                        <span class="badge"
+                                              t-att-class="'badge-' + (record.state.raw_value == 'discharged' ? 'success' : (record.state.raw_value == 'admitted' ? 'warning' : 'info'))">
+                                            <t t-esc="record.state.raw_value or 'Draft'"/>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="view_patient_graph" model="ir.ui.view">
+        <field name="name">hospital.patient.graph</field>
+        <field name="model">hospital.patient</field>
+        <field name="arch" type="xml">
+            <graph string="Patient Analysis" type="bar">
+                <field name="priority" type="row"/>
+                <field name="age" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="view_patient_pivot" model="ir.ui.view">
+        <field name="name">hospital.patient.pivot</field>
+        <field name="model">hospital.patient</field>
+        <field name="arch" type="xml">
+            <pivot string="Patient Pivot Analysis">
+                <field name="state" type="row"/>
+                <field name="priority" type="col"/>
+                <field name="age" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_hospital_department_search" model="ir.ui.view">
+        <field name="name">hospital.department.search</field>
+        <field name="model">hospital.department</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name" string="Department Name"/>
+                <field name="code" string="Department Code"/>
+                <field name="head_doctor_id" string="Head Doctor"/>
+                <filter name="filter_active" string="Active" domain="[('active', '=', True)]"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_by_head_doctor" string="Head Doctor" domain="[]"
+                            context="{'group_by': 'head_doctor_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_department_tree" model="ir.ui.view">
+        <field name="name">hospital.department.tree</field>
+        <field name="model">hospital.department</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="code"/>
+                <field name="head_doctor_id"/>
+                <field name="capacity"/>
+                <field name="active"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_department_form" model="ir.ui.view">
+        <field name="name">hospital.department.form.view</field>
+        <field name="model">hospital.department</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Department Name" required="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Department Details">
+                            <field name="code" required="1"/>
+                            <field name="head_doctor_id"/>
+                            <field name="capacity"/>
+                            <field name="active"/>
+                        </group>
+                        <group string="Description">
+                            <field name="description" nolabel="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Members">
+                            <group>
+                                <field name="doctor_ids" nolabel="1">
+                                    <tree>
+                                        <field name="name"/>
+                                        <field name="specialty"/>
+                                    </tree>
+                                </field>
+                                <field name="staff_ids" nolabel="1">
+                                    <tree>
+                                        <field name="name"/>
+                                        <field name="role"/>
+                                    </tree>
+                                </field>
+                                <field name="patient_ids" nolabel="1">
+                                    <tree>
+                                        <field name="name"/>
+                                        <field name="priority"/>
+                                    </tree>
+                                </field>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_department" model="ir.actions.act_window">
+        <field name="name">Departments</field>
+        <field name="res_model">hospital.department</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_hospital_department_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first department
+            </p>
+            <p>
+                Manage hospital departments, including their heads, staff, and patient assignments.
+            </p>
+        </field>
+    </record>
+</odoo>

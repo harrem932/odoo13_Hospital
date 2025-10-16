@@ -1,0 +1,771 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ========== CUSTOM PAPER FORMAT ========== -->
+    <record id="paperformat_hospital_reports" model="report.paperformat">
+        <field name="name">Hospital Report Format</field>
+        <field name="default" eval="False"/>
+        <field name="format">A4</field>
+        <field name="page_height">0</field>
+        <field name="page_width">0</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">40</field>
+        <field name="margin_bottom">23</field>
+        <field name="margin_left">7</field>
+        <field name="margin_right">7</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">35</field>
+        <field name="dpi">90</field>
+    </record>
+
+    <!-- ========== REPORT ACTIONS ========== -->
+    <record id="action_report_doctor_information" model="ir.actions.report">
+        <field name="name">Doctor Information Report</field>
+        <field name="model">hospital.doctor</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">hospital.report_doctor_information_template</field>
+        <field name="report_file">hospital.report_doctor_information_template</field>
+        <field name="binding_model_id" ref="model_hospital_doctor"/>
+        <field name="binding_type">report</field>
+        <field name="paperformat_id" ref="hospital.paperformat_hospital_reports"/>
+    </record>
+
+    <record id="action_report_patient_bill" model="ir.actions.report">
+        <field name="name">Patient Medical Bill</field>
+        <field name="model">hospital.patient</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">hospital.report_patient_bill_template</field>
+        <field name="report_file">hospital.report_patient_bill_template</field>
+        <field name="binding_model_id" ref="model_hospital_patient"/>
+        <field name="binding_type">report</field>
+        <field name="paperformat_id" ref="hospital.paperformat_hospital_reports"/>
+    </record>
+
+    <record id="action_report_staff_payroll" model="ir.actions.report">
+        <field name="name">Staff Payroll Report</field>
+        <field name="model">hospital.staff</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">hospital.report_staff_payroll_template</field>
+        <field name="report_file">hospital.report_staff_payroll_template</field>
+        <field name="binding_model_id" ref="model_hospital_staff"/>
+        <field name="binding_type">report</field>
+        <field name="paperformat_id" ref="hospital.paperformat_hospital_reports"/>
+    </record>
+
+    <!-- ========== REPORT TEMPLATES ========== -->
+    <template id="report_doctor_information_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <div class="page" style="font-family: Arial, sans-serif;">
+                        <!-- Header Section -->
+                        <div class="row mb32">
+                            <div class="col-12 text-center">
+                                <h1 style="color: #2E86AB; border-bottom: 3px solid #2E86AB; padding-bottom: 10px;">
+                                    DOCTOR INFORMATION REPORT
+                                </h1>
+                                <p class="text-muted">Comprehensive Medical Professional Profile</p>
+                            </div>
+                        </div>
+                        <!-- Doctor Image and Basic Info -->
+                        <div class="row mb16">
+                            <div class="col-3">
+                                <div t-if="doc.image" class="text-center">
+                                    <img t-att-src="image_data_uri(doc.image)"
+                                         style="width: 120px; height: 120px; border-radius: 10px; border: 2px solid #2E86AB;"/>
+                                </div>
+                                <div t-else="" class="text-center">
+                                    <div style="width: 120px; height: 120px; background: #f8f9fa; border: 2px solid #dee2e6;
+                                               border-radius: 10px; display: flex; align-items: center; justify-content: center;">
+                                        <span class="text-muted">No Photo</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-9">
+                                <table class="table table-borderless" style="font-size: 16px;">
+                                    <tr>
+                                        <td style="width: 30%; font-weight: bold; color: #2E86AB;">Doctor Name:</td>
+                                        <td style="font-weight: bold; font-size: 18px;">
+                                            <span t-field="doc.name"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-weight: bold; color: #2E86AB;">Full Name:</td>
+                                        <td>
+                                            <span t-field="doc.full_name"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-weight: bold; color: #2E86AB;">Specialty:</td>
+                                        <td>
+                                            <span t-field="doc.specialty"
+                                                  style="background: #e3f2fd; padding: 4px 8px; border-radius: 4px;"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-weight: bold; color: #2E86AB;">License Number:</td>
+                                        <td>
+                                            <span t-field="doc.license_number"/>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        <!-- Professional and Contact Info -->
+                        <div class="row mb32">
+                            <div class="col-6">
+                                <h3 style="color: #2E86AB; border-left: 4px solid #2E86AB; padding-left: 10px;">
+                                    Professional Details
+                                </h3>
+                                <table class="table table-sm table-striped">
+                                    <tr>
+                                        <td style="font-weight: bold;">Department:</td>
+                                        <td>
+                                            <span t-field="doc.department"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-weight: bold;">Experience:</td>
+                                        <td>
+                                            <span t-field="doc.years_experience"/>
+                                            years
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-weight: bold;">Status:</td>
+                                        <td>
+                                            <span t-field="doc.state"
+                                                  t-options='{"widget": "badge", "success": "done", "warning": "in_progress", "info": "approved"}'/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-weight: bold;">Rating:</td>
+                                        <td>
+                                            <t t-if="doc.rating != '0'">
+                                                <span t-field="doc.rating"/>/5
+                                                <span style="color: gold;">★★★★★</span>
+                                            </t>
+                                            <t t-else="">No Rating</t>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-weight: bold;">Hire Date:</td>
+                                        <td>
+                                            <span t-field="doc.hire_date" t-options='{"widget": "date"}'/>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="col-6">
+                                <h3 style="color: #2E86AB; border-left: 4px solid #2E86AB; padding-left: 10px;">
+                                    Contact Information
+                                </h3>
+                                <table class="table table-sm table-striped">
+                                    <tr>
+                                        <td style="font-weight: bold;">Age:</td>
+                                        <td>
+                                            <span t-field="doc.age"/>
+                                            years
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-weight: bold;">Gender:</td>
+                                        <td>
+                                            <span t-field="doc.gender"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-weight: bold;">Email:</td>
+                                        <td>
+                                            <span t-field="doc.email"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-weight: bold;">Phone:</td>
+                                        <td>
+                                            <span t-field="doc.phone_number"/>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-weight: bold;">Address:</td>
+                                        <td>
+                                            <span t-field="doc.address"/>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        <!-- Associated Patients -->
+                        <div class="row mb32">
+                            <div class="col-12">
+                                <h3 style="color: #2E86AB; border-left: 4px solid #2E86AB; padding-left: 10px;">
+                                    Associated Patients
+                                </h3>
+                                <table class="table table-bordered table-hover">
+                                    <thead style="background-color: #f8f9fa;">
+                                        <tr>
+                                            <th>Patient Name</th>
+                                            <th>Age</th>
+                                            <th>Blood Group</th>
+                                            <th>Priority</th>
+                                            <th>Status</th>
+                                            <th>Contact</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="doc.patient_ids" t-as="patient">
+                                            <tr>
+                                                <td>
+                                                    <strong>
+                                                        <span t-field="patient.name"/>
+                                                    </strong>
+                                                </td>
+                                                <td>
+                                                    <span t-field="patient.age"/>
+                                                    years
+                                                </td>
+                                                <td>
+                                                    <span t-field="patient.blood_group"/>
+                                                </td>
+                                                <td>
+                                                    <span t-field="patient.priority"
+                                                          class="badge badge-pill"
+                                                          t-attf-class="badge badge-pill badge-#{patient.priority == 'critical' and 'danger' or (patient.priority == 'high' and 'warning' or 'info')}"/>
+                                                </td>
+                                                <td>
+                                                    <span t-field="patient.state"/>
+                                                </td>
+                                                <td>
+                                                    <span t-field="patient.phone_number"/>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                        <t t-if="not doc.patient_ids">
+                                            <tr>
+                                                <td colspan="6" class="text-center text-muted">No patients currently assigned</td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <!-- Additional Notes -->
+                        <div class="row mb32" t-if="doc.notes">
+                            <div class="col-12">
+                                <h3 style="color: #2E86AB; border-left: 4px solid #2E86AB; padding-left: 10px;">
+                                    Additional Notes
+                                </h3>
+                                <div class="alert alert-info">
+                                    <span t-field="doc.notes"/>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Footer -->
+                        <div class="row mt64">
+                            <div class="col-12">
+                                <hr style="border-top: 2px solid #2E86AB;"/>
+                                <div class="text-center">
+                                    <p>
+                                        <strong>Hospital Management System</strong>
+                                    </p>
+                                    <p class="text-muted">
+                                        Report generated on
+                                        <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%B %d, %Y at %I:%M %p')"/>
+                                    </p>
+                                    <p class="text-muted">This document contains confidential medical information</p>
+                                    <p class="text-muted">Contact: billing@hospital.com | Phone: +123-456-7890</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <template id="report_patient_bill_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <div class="page" style="font-family: Arial, sans-serif;">
+                        <!-- Invoice Header -->
+                        <div class="row mb32">
+                            <div class="col-8">
+                                <h1 style="color: #d32f2f; font-weight: bold;">MEDICAL BILL</h1>
+                                <div class="mb16">
+                                    <strong>Invoice #:</strong>
+                                    <span t-esc="'HMS-' + str(doc.id).zfill(6)"/>-
+                                    <span t-esc="datetime.datetime.now().strftime('%Y%m')"/>
+                                    <br/>
+                                    <strong>Bill Date:</strong>
+                                    <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%B %d, %Y')"/>
+                                    <br/>
+                                    <strong>Due Date:</strong>
+                                    <span t-esc="(context_timestamp(datetime.datetime.now()) + datetime.timedelta(days=30)).strftime('%B %d, %Y')"/>
+                                </div>
+                            </div>
+                            <div class="col-4 text-right">
+                                <div t-if="doc.image">
+                                    <img t-att-src="image_data_uri(doc.image)"
+                                         style="max-height: 80px; border-radius: 8px;"/>
+                                </div>
+                                <div class="mt8">
+                                    <strong>Patient ID:</strong>
+                                    <span t-esc="doc.id"/>
+                                    <br/>
+                                    <strong>Priority:</strong>
+                                    <span t-field="doc.priority" class="badge badge-pill"
+                                          t-attf-class="badge badge-pill badge-#{doc.priority == 'critical' and 'danger' or 'info'}"/>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Patient and Medical Info -->
+                        <div class="row mb32">
+                            <div class="col-6">
+                                <div style="border: 1px solid #dee2e6; padding: 20px; border-radius: 8px; background-color: #f8f9fa;">
+                                    <h4 style="color: #2E86AB; margin-bottom: 15px;">Patient Information</h4>
+                                    <table class="table table-sm table-borderless">
+                                        <tr>
+                                            <td style="font-weight: bold; width: 40%;">Full Name:</td>
+                                            <td>
+                                                <span t-field="doc.name"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-weight: bold;">Age:</td>
+                                            <td>
+                                                <span t-field="doc.age"/>
+                                                years
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-weight: bold;">Blood Group:</td>
+                                            <td>
+                                                <span t-field="doc.blood_group"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-weight: bold;">Gender:</td>
+                                            <td>
+                                                <span t-field="doc.gender"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-weight: bold;">Phone:</td>
+                                            <td>
+                                                <span t-field="doc.phone_number"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-weight: bold;">Address:</td>
+                                            <td>
+                                                <span t-field="doc.address"/>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div style="border: 1px solid #dee2e6; padding: 20px; border-radius: 8px; background-color: #f8f9fa;">
+                                    <h4 style="color: #2E86AB; margin-bottom: 15px;">Medical Information</h4>
+                                    <table class="table table-sm table-borderless">
+                                        <tr>
+                                            <td style="font-weight: bold; width: 40%;">Attending Doctor:</td>
+                                            <td>
+                                                <span t-field="doc.patient_id.name"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-weight: bold;">Department:</td>
+                                            <td>
+                                                <span t-field="doc.department_id.name"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-weight: bold;">Admission Date:</td>
+                                            <td>
+                                                <span t-field="doc.admission_date"
+                                                      t-options='{"widget": "datetime"}'/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-weight: bold;">Status:</td>
+                                            <td>
+                                                <span t-field="doc.state"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-weight: bold;">Emergency Contact:</td>
+                                            <td>
+                                                <span t-field="doc.emergency_contact"/>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Medical Services & Charges -->
+                        <div class="row mb32">
+                            <div class="col-12">
+                                <h4 style="color: #2E86AB; border-bottom: 2px solid #2E86AB; padding-bottom: 8px;">
+                                    Medical Services &amp; Charges
+                                </h4>
+                                <table class="table table-bordered">
+                                    <thead style="background-color: #2E86AB; color: white;">
+                                        <tr>
+                                            <th style="width: 8%;">#</th>
+                                            <th style="width: 25%;">Service</th>
+                                            <th style="width: 40%;">Description</th>
+                                            <th style="width: 12%;" class="text-center">Qty</th>
+                                            <th style="width: 15%;" class="text-right">Amount ($)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>1</td>
+                                            <td>
+                                                <strong>Consultation Fee</strong>
+                                            </td>
+                                            <td>Professional consultation with Dr.
+                                                <span t-field="doc.patient_id.name"/>
+                                            </td>
+                                            <td class="text-center">1</td>
+                                            <td class="text-right">
+                                                <span t-esc="doc.patient_id.consultation_fee or 200"/>
+                                            </td>
+                                        </tr>
+                                        <tr t-if="doc.last_lab_results">
+                                            <td>2</td>
+                                            <td>
+                                                <strong>Laboratory Tests</strong>
+                                            </td>
+                                            <td>Comprehensive laboratory examinations and diagnostic tests</td>
+                                            <td class="text-center">1</td>
+                                            <td class="text-right">350</td>
+                                        </tr>
+                                        <tr t-if="doc.medication_history">
+                                            <td>3</td>
+                                            <td>
+                                                <strong>Medications</strong>
+                                            </td>
+                                            <td>Prescribed medications and pharmaceutical supplies</td>
+                                            <td class="text-center">1</td>
+                                            <td class="text-right">275</td>
+                                        </tr>
+                                        <tr t-if="doc.state == 'admitted'">
+                                            <td>4</td>
+                                            <td>
+                                                <strong>Room Charges</strong>
+                                            </td>
+                                            <td>Hospital accommodation and nursing care charges</td>
+                                            <td class="text-center">1</td>
+                                            <td class="text-right">500</td>
+                                        </tr>
+                                        <tr t-if="doc.current_symptoms">
+                                            <td>5</td>
+                                            <td>
+                                                <strong>Treatment</strong>
+                                            </td>
+                                            <td>Medical treatment and procedures</td>
+                                            <td class="text-center">1</td>
+                                            <td class="text-right">150</td>
+                                        </tr>
+                                        <tr t-if="doc.priority == 'critical'">
+                                            <td>6</td>
+                                            <td>
+                                                <strong>Critical Care Discount</strong>
+                                            </td>
+                                            <td>Discount for critical priority patients</td>
+                                            <td class="text-center">1</td>
+                                            <td class="text-right">-100</td>
+                                        </tr>
+                                    </tbody>
+                                    <tfoot>
+                                        <tr style="background-color: #f8f9fa;">
+                                            <th colspan="4" class="text-right" style="font-size: 16px;">Subtotal:</th>
+                                            <th class="text-right" style="font-size: 16px;">
+                                                $
+                                                <span t-esc="(doc.patient_id.consultation_fee or 200) + (350 if doc.last_lab_results else 0) + (275 if doc.medication_history else 0) + (500 if doc.state == 'admitted' else 0) + (150 if doc.current_symptoms else 0) + (-100 if doc.priority == 'critical' else 0)"/>
+                                            </th>
+                                        </tr>
+                                        <tr style="background-color: #f8f9fa;">
+                                            <th colspan="4" class="text-right" style="font-size: 16px;">Tax (5%):</th>
+                                            <th class="text-right" style="font-size: 16px;">
+                                                $
+                                                <span t-esc="round(((doc.patient_id.consultation_fee or 200) + (350 if doc.last_lab_results else 0) + (275 if doc.medication_history else 0) + (500 if doc.state == 'admitted' else 0) + (150 if doc.current_symptoms else 0) + (-100 if doc.priority == 'critical' else 0)) * 0.05, 2)"/>
+                                            </th>
+                                        </tr>
+                                        <tr style="background-color: #2E86AB; color: white;">
+                                            <th colspan="4" class="text-right" style="font-size: 18px; font-weight: bold;">TOTAL AMOUNT:</th>
+                                            <th class="text-right" style="font-size: 18px; font-weight: bold;">
+                                                $
+                                                <span t-esc="round(((doc.patient_id.consultation_fee or 200) + (350 if doc.last_lab_results else 0) + (275 if doc.medication_history else 0) + (500 if doc.state == 'admitted' else 0) + (150 if doc.current_symptoms else 0) + (-100 if doc.priority == 'critical' else 0)) * 1.05, 2)"/>
+                                            </th>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                        <!-- Medical History -->
+                        <div class="row mb32" t-if="doc.patient_history">
+                            <div class="col-12">
+                                <h4 style="color: #2E86AB; border-bottom: 2px solid #2E86AB; padding-bottom: 8px;">
+                                    Medical History
+                                </h4>
+                                <div style="border: 1px solid #dee2e6; padding: 15px; border-radius: 8px; background-color: #f8f9fa; font-style: italic;">
+                                    <span t-field="doc.patient_history"/>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Assigned Staff -->
+                        <div class="row mb32">
+                            <div class="col-12">
+                                <h4 style="color: #2E86AB; border-bottom: 2px solid #2E86AB; padding-bottom: 8px;">
+                                    Assigned Staff
+                                </h4>
+                                <table class="table table-bordered">
+                                    <thead style="background-color: #2E86AB; color: white;">
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Role</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="doc.staff_ids" t-as="staff">
+                                            <tr>
+                                                <td><span t-field="staff.name"/></td>
+                                                <td><span t-field="staff.role"/></td>
+                                            </tr>
+                                        </t>
+                                        <t t-if="not doc.staff_ids">
+                                            <tr>
+                                                <td colspan="2" class="text-center text-muted">No staff assigned</td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <!-- Payment Instructions -->
+                        <div class="row mb32">
+                            <div class="col-12">
+                                <div class="alert alert-info">
+                                    <h5>
+                                        <strong>Payment Instructions</strong>
+                                    </h5>
+                                    <ul class="mb0">
+                                        <li>Payment is due within 30 days of invoice date</li>
+                                        <li>Please reference invoice number on all payments</li>
+                                        <li>For insurance claims, please contact our billing department</li>
+                                        <li>Late payments may be subject to additional charges</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Pay Now Button -->
+                        <div class="row mb32">
+                            <div class="col-12 text-center">
+                                <a href="/payment/process?patient_id={{doc.id}}" target="_blank" class="btn btn-primary" style="background-color: #2E86AB; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">
+                                    Pay Now
+                                </a>
+                            </div>
+                        </div>
+                        <!-- Footer -->
+                        <div class="row mt64">
+                            <div class="col-12">
+                                <hr style="border-top: 2px solid #d32f2f;"/>
+                                <div class="text-center">
+                                    <h4>
+                                        <strong>Hospital Management System</strong>
+                                    </h4>
+                                    <p>Excellence in Healthcare Services</p>
+                                    <p class="text-muted">Thank you for choosing our medical services</p>
+                                    <p class="text-muted">Contact: billing@hospital.com | Phone: +123-456-7890</p>
+                                    <small class="text-muted">This is a computer-generated invoice and does not require a signature</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <template id="report_staff_payroll_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <div class="page" style="font-family: Arial, sans-serif;">
+                        <!-- Header -->
+                        <div class="row mb32">
+                            <div class="col-12 text-center">
+                                <h1 style="color: #2E86AB; border-bottom: 3px solid #2E86AB; padding-bottom: 10px;">
+                                    STAFF PAYROLL REPORT
+                                </h1>
+                                <p class="text-muted">Monthly Staff Compensation Summary</p>
+                                <p>
+                                    <strong>Generated on:</strong>
+                                    <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%B %d, %Y')"/>
+                                </p>
+                            </div>
+                        </div>
+                        <!-- Staff Information -->
+                        <div class="row mb32">
+                            <div class="col-6">
+                                <div style="border: 1px solid #dee2e6; padding: 20px; border-radius: 8px; background-color: #f8f9fa;">
+                                    <h4 style="color: #2E86AB; margin-bottom: 15px;">Staff Information</h4>
+                                    <table class="table table-sm table-borderless">
+                                        <tr>
+                                            <td style="font-weight: bold; width: 40%;">Full Name:</td>
+                                            <td>
+                                                <span t-field="doc.name"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-weight: bold;">Role:</td>
+                                            <td>
+                                                <span t-field="doc.role"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-weight: bold;">Department:</td>
+                                            <td>
+                                                <span t-field="doc.department_id.name"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-weight: bold;">Hire Date:</td>
+                                            <td>
+                                                <span t-field="doc.hire_date" t-options='{"widget": "date"}'/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-weight: bold;">Contract Type:</td>
+                                            <td>
+                                                <span t-field="doc.contract_type"/>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div style="border: 1px solid #dee2e6; padding: 20px; border-radius: 8px; background-color: #f8f9fa;">
+                                    <h4 style="color: #2E86AB; margin-bottom: 15px;">Contact Information</h4>
+                                    <table class="table table-sm table-borderless">
+                                        <tr>
+                                            <td style="font-weight: bold; width: 40%;">Age:</td>
+                                            <td>
+                                                <span t-field="doc.age"/>
+                                                years
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-weight: bold;">Gender:</td>
+                                            <td>
+                                                <span t-field="doc.gender"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-weight: bold;">Phone:</td>
+                                            <td>
+                                                <span t-field="doc.phone_number"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-weight: bold;">Email:</td>
+                                            <td>
+                                                <span t-field="doc.email"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="font-weight: bold;">Address:</td>
+                                            <td>
+                                                <span t-field="doc.address"/>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Payroll Details -->
+                        <div class="row mb32">
+                            <div class="col-12">
+                                <h4 style="color: #2E86AB; border-bottom: 2px solid #2E86AB; padding-bottom: 8px;">
+                                    Payroll Details
+                                </h4>
+                                <table class="table table-bordered">
+                                    <thead style="background-color: #2E86AB; color: white;">
+                                        <tr>
+                                            <th style="width: 10%;">#</th>
+                                            <th style="width: 30%;">Item</th>
+                                            <th style="width: 40%;">Description</th>
+                                            <th style="width: 20%;" class="text-right">Amount ($)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>1</td>
+                                            <td>
+                                                <strong>Base Salary</strong>
+                                            </td>
+                                            <td>Monthly salary as per contract</td>
+                                            <td class="text-right">
+                                                <span t-field="doc.salary"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>2</td>
+                                            <td>
+                                                <strong>Bonus</strong>
+                                            </td>
+                                            <td>Performance or overtime bonus</td>
+                                            <td class="text-right">
+                                                <span t-esc="doc.salary * 0.1"/>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                    <tfoot>
+                                        <tr style="background-color: #f8f9fa;">
+                                            <th colspan="3" class="text-right" style="font-size: 16px;">Subtotal:</th>
+                                            <th class="text-right" style="font-size: 16px;">
+                                                $
+                                                <span t-esc="doc.salary + (doc.salary * 0.1)"/>
+                                            </th>
+                                        </tr>
+                                        <tr style="background-color: #f8f9fa;">
+                                            <th colspan="3" class="text-right" style="font-size: 16px;">Tax (5%):</th>
+                                            <th class="text-right" style="font-size: 16px;">
+                                                $
+                                                <span t-esc="round((doc.salary + (doc.salary * 0.1)) * 0.05, 2)"/>
+                                            </th>
+                                        </tr>
+                                        <tr style="background-color: #2E86AB; color: white;">
+                                            <th colspan="3" class="text-right" style="font-size: 18px; font-weight: bold;">TOTAL AMOUNT:</th>
+                                            <th class="text-right" style="font-size: 18px; font-weight: bold;">
+                                                $
+                                                <span t-esc="round((doc.salary + (doc.salary * 0.1)) * 1.05, 2)"/>
+                                            </th>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                        <!-- Footer -->
+                        <div class="row mt64">
+                            <div class="col-12">
+                                <hr style="border-top: 2px solid #2E86AB;"/>
+                                <div class="text-center">
+                                    <h4>
+                                        <strong>Hospital Management System</strong>
+                                    </h4>
+                                    <p>Excellence in Healthcare Services</p>
+                                    <p class="text-muted">Contact: hr@hospital.com | Phone: +123-456-7890</p>
+                                    <small class="text-muted">This is a computer-generated payroll report and does not require a signature</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>
